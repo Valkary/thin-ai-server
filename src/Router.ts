@@ -8,8 +8,10 @@ const AppRouter = Router();
 AppRouter.get('/', GetController.home);
 AppRouter.get('/users', GetController.users);
 AppRouter.get('/patients', GetController.patients);
+AppRouter.get('/appointments', GetController.appointments);
 
 //POST requests
 AppRouter.post('/patient', PostController.patient);
+AppRouter.post('/appointment', PostController.appointment);
 
 export default AppRouter;
