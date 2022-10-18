@@ -2,8 +2,8 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import AppRouter from "./Router";
 import bodyParser from "body-parser";
-//@ts-ignore
 import cors from "cors";
+import fileUpload from "express-fileupload";
 
 dotenv.config();
 
@@ -13,6 +13,7 @@ const port = process.env.PORT;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(fileUpload({ createParentPath: true }))
 app.use('/', AppRouter);
 
 app.listen(port, () => {

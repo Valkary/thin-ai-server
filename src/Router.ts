@@ -13,5 +13,6 @@ AppRouter.get('/appointments', GetController.appointments);
 //POST requests
 AppRouter.post('/patient', PostController.patient);
 AppRouter.post('/appointment', PostController.appointment);
+AppRouter.post('/upload_pdf', PostController.upload_pdf);
 
 export default AppRouter;
