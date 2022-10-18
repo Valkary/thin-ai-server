@@ -12,3 +12,8 @@ export const UploadedFile = z.object({
 });
 
 export type UploadedFilesType = z.infer<typeof UploadedFile>;
+
+export interface FILE_PATHS {
+  path: string,
+  name: string
+}

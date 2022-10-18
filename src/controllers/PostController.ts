@@ -4,7 +4,7 @@ import fs from "fs";
 
 import { Patient, post_patient_schema } from "../types/Patient";
 import { Appointment, post_appointment_schema } from "../types/Appointment";
-import { UploadedFile, UploadedFilesType } from "../types/File";
+import { UploadedFile, UploadedFilesType, FILE_PATHS } from "../types/File";
 
 const prisma = new PrismaClient();
 
@@ -61,14 +61,14 @@ const PostController = {
     // @ts-ignore
     const files: UploadedFilesType[] = req.files;
     try {
-      UploadedFile.parse(files);
+      files.forEach(file => UploadedFile.parse(file));
     } catch (error) {
       return res.status(400).send(error);
     }
 
     if (!files) return res.status(400).send({ status: 400, content: "No files were uploaded to the server" });
 
-    console.debug(files);
+    let file_paths: FILE_PATHS[] = [];
 
     files.map(file => {
       const { originalname, mimetype, path, size } = file;
@@ -83,11 +83,32 @@ const PostController = {
         fs.writeFileSync(`uploads/${name}`, data);
         fs.unlinkSync(path);
         console.debug("> Successfully uploaded file to server");
-        return res.status(200).send({ status: 200, content: "Success!" })
       } catch (error) {
         return res.status(400).send({ status: 400, content: error });
       }
+
+      file_paths.push({
+        name,
+        path
+      });
     });
+
+    file_paths.map(async (file) => {
+      const { name, path } = file;
+      try {
+        await prisma.file.create({
+          data: {
+            patient_id: 1, //TODO: make this come in the request body
+            name,
+            location: path,
+            type: "dont remember what this was for"
+          }
+        });
+      } catch (error) {
+        return res.status(400).send({ status: 400, content: `Error indexing ${name} to database` });
+      }
+    });
+    return res.status(200).send({ status: 200, content: `Uploaded and indexed ${file_paths.length} files` });
   }
 }
 
