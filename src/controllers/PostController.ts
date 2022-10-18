@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import fs from "fs";
 
 import { Patient, post_patient_schema } from "../types/Patient";
 import { Appointment, post_appointment_schema } from "../types/Appointment";
+import { UploadedFile, UploadedFilesType } from "../types/File";
 
 const prisma = new PrismaClient();
 
@@ -56,17 +58,36 @@ const PostController = {
     return res.status(200).send({ status: 200, content: "Succesfully uploaded new appointment" });
   },
   upload_pdf: async (req: Request, res: Response) => {
-    const { files } = req;
+    // @ts-ignore
+    const files: UploadedFilesType[] = req.files;
+    try {
+      UploadedFile.parse(files);
+    } catch (error) {
+      return res.status(400).send(error);
+    }
 
-    console.debug(req.files, req.body, req.params);
+    if (!files) return res.status(400).send({ status: 400, content: "No files were uploaded to the server" });
 
-    if (!files) return res.status(400).send({ status: 400, content: "No files were uploaded to the server"});
+    console.debug(files);
 
-    const { pdf } = files;
+    files.map(file => {
+      const { originalname, mimetype, path, size } = file;
 
-    console.debug(pdf);
+      if (size <= 0) return;
+      if (mimetype.split("/")[1] !== "pdf") return;
 
-    return res.status(200).send({ status: 200, content: "Still adding this functionality" });
+      const name = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${originalname}`;
+      const data = fs.readFileSync(path);
+
+      try {
+        fs.writeFileSync(`uploads/${name}`, data);
+        fs.unlinkSync(path);
+        console.debug("> Successfully uploaded file to server");
+        return res.status(200).send({ status: 200, content: "Success!" })
+      } catch (error) {
+        return res.status(400).send({ status: 400, content: error });
+      }
+    });
   }
 }
 
