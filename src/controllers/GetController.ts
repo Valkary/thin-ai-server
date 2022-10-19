@@ -24,6 +24,12 @@ const GetController = {
     const appointments = await prisma.appointment.findMany();
     prisma.$disconnect();
     res.status(200).send({ status: 200, content: appointments });
+  },
+  files: async (_: Request, res: Response) => {
+    console.debug("> Fetching all file locations...");
+    const files = await prisma.file.findMany();
+    prisma.$disconnect();
+    res.status(200).send({ status: 200, content: files });
   }
 }
 
