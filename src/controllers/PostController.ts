@@ -5,10 +5,40 @@ import fs from "fs";
 import { Patient, post_patient_schema } from "../types/Patient";
 import { Appointment, post_appointment_schema } from "../types/Appointment";
 import { UploadedFile, UploadedFilesType, FILE_PATHS } from "../types/File";
+import { PostUserType, post_user_data } from "../types/User";
 
 const prisma = new PrismaClient();
 
 const PostController = {
+  user: async (req: Request, res: Response) => {
+    const body: PostUserType = req.body;
+
+    try {
+      post_user_data.parse(body);
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+
+    const { username, names, last_names, password, security, email } = body;
+
+    try {
+      await prisma.user.create({
+        data: {
+          username,
+          email,
+          names,
+          last_names,
+          password,
+          security
+        }
+      });
+      prisma.$disconnect();
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+
+    return res.status(200).send({ status: 200, content: "Succesful operation" });
+  },
   patient: async (req: Request, res: Response) => {
     const body: Patient = req.body;
     try {
@@ -58,6 +88,7 @@ const PostController = {
     return res.status(200).send({ status: 200, content: "Succesfully uploaded new appointment" });
   },
   upload_pdf: async (req: Request, res: Response) => {
+    const { patient_id } = req.body;
     // @ts-ignore
     const files: UploadedFilesType[] = req.files;
     try {
@@ -98,10 +129,10 @@ const PostController = {
       try {
         await prisma.file.create({
           data: {
-            patient_id: 1, //TODO: make this come in the request body
+            patient_id,
             name,
             location: path,
-            type: "dont remember what this was for"
+            type: "dont remember what this was for" // TODO: figure what this was for
           }
         });
       } catch (error) {
