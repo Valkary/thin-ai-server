@@ -1,12 +1,52 @@
 import { Request, Response } from "express";
 import { PrismaClient, User } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { UpdatePassType, update_password_data } from "../types/User";
+
+import { PostUserType } from "../types/User";
+import { UpdatePassType } from "../types/User";
+
+import { post_user_data } from "../types/User";
+import { update_password_data } from "../types/User";
 
 const prisma = new PrismaClient();
 
-const UpdateController = {
-  user_password: async (req: Request, res: Response) => {
+const UserController = {
+  get_all: async (_: Request, res: Response) => {
+    console.debug("> Fetching for all users...");
+    const users = await prisma.user.findMany();
+    prisma.$disconnect();
+    res.status(200).send({ status: 200, content: users });
+  },
+  create: async (req: Request, res: Response) => {
+    const body: PostUserType = req.body;
+
+    try {
+      post_user_data.parse(body);
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+
+    const { username, names, last_names, password, security, email } = body;
+
+    try {
+      await prisma.user.create({
+        data: {
+          username,
+          email,
+          names,
+          last_names,
+          password,
+          security
+        }
+      });
+      prisma.$disconnect();
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+
+    return res.status(200).send({ status: 200, content: "Succesful operation" });
+  },
+  update_password: async (req: Request, res: Response) => {
     const body: UpdatePassType = req.body;
     // Verify body types
     try {
@@ -26,10 +66,10 @@ const UpdateController = {
       });
 
       if (!user) return res.status(200).send({ success: false, message: "User id was not found" });
-      
+
       const { password } = user;
       const verify_password = await bcrypt.compare(old_pass, password);
-      
+
       if (!verify_password) return res.status(200).send({ success: false, message: "Passwords didn't match!" });
     } catch (error) {
       return res.status(200).send({ success: false, message: error });
@@ -54,6 +94,6 @@ const UpdateController = {
 
     return res.status(200).send({ success: true, message: "Password was succesfully updated!" });
   },
-}
+};
 
-export default UpdateController;
+export default UserController;

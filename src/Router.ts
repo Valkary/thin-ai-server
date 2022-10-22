@@ -2,29 +2,31 @@ import { Router } from "express";
 import multer from "multer";
 
 /* CONTROLLERS */
-import GetController from "./controllers/GetController";
-import PostController from "./controllers/PostController";
-import UpdateController from "./controllers/UpdateController";
+import PatientController from "./controllers/PatientController";
+import UserController from "./controllers/UserController";
+import AppointmentController from "./controllers/AppointmentController";
+import FileController from "./controllers/FileController";
 
 const AppRouter = Router();
 const upload = multer({ dest: "uploads/" });
 
 // TODO: add jwt validation for all routes except login route
 
-// GET requests
-AppRouter.get('/', GetController.home);
-AppRouter.get('/gets/users', GetController.users);
-AppRouter.get('/gets/patients', GetController.patients);
-AppRouter.get('/gets/appointments', GetController.appointments);
-AppRouter.get('/gets/files', GetController.files);
+/* USERS */
+AppRouter.get('/gets/users', UserController.get_all);
+AppRouter.post('/posts/user', UserController.create);
+AppRouter.post('/updates/user_pass', UserController.update_password);
 
-//POST requests
-/* [NEW] */
-AppRouter.post('/posts/patient', PostController.patient);
-AppRouter.post('/posts/appointment', PostController.appointment);
-AppRouter.post('/posts/upload_pdf', upload.array("files"), PostController.upload_pdf);
-AppRouter.post('/posts/user', PostController.user);
+/* PATIENTS */
+AppRouter.get('/gets/patients', PatientController.get_all);
+AppRouter.post('/posts/patient', PatientController.create);
 
-/* [UPDATES] */
-AppRouter.post('/updates/user_pass', UpdateController.user_password);
+/* APPOINTMENTS */
+AppRouter.get('/gets/appointments', AppointmentController.get_all);
+AppRouter.post('/posts/appointment', AppointmentController.create);
+
+/* FILES */
+AppRouter.get('/gets/files', FileController.get_all);
+AppRouter.post('/posts/upload_pdf', upload.array("files"), FileController.upload_pdf);
+
 export default AppRouter;
