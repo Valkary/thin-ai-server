@@ -13,8 +13,15 @@ export const post_user_data = z.object({
 export const update_password_data = z.object({
   user_id: z.number({ required_error: "User id must be a number" }),
   old_pass: z.string({ required_error: "The old password must be a string" }),
-  new_pass: z.string({ required_error: "New password must be a string" })
-})
+  new_pass: z.string({ required_error: "New password must be a string" }),
+  confirm_new_pass: z.string({ required_error: "New password must be a string" })
+}).refine(({ confirm_new_pass, new_pass }) => confirm_new_pass === new_pass, { message: "Passwords must match" })
+
+export const user_login = z.object({
+  user_id: z.number({ required_error: "User id must be a number" }),
+  pass: z.string({ required_error: "Password must be a string" }).min(1).max(40)
+});
 
 export type UpdatePassType = z.infer<typeof update_password_data>;
 export type PostUserType = z.infer<typeof post_user_data>;
+export type UserLoginType = z.infer<typeof user_login>;
