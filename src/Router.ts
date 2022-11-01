@@ -13,6 +13,11 @@ import FileController from "./controllers/FileController";
 const AppRouter = Router();
 const upload = multer({ dest: "uploads/" });
 
+AppRouter.get('/', (_, res) => {
+  console.log('here!');
+  res.status(200).send({ success: true, message: "Welcome to the Crit Cares Server!" })
+});
+
 /* USERS */
 AppRouter.get('/users/get_all', VerifyJWT, UserController.get_all);
 AppRouter.post('/users/create', VerifyJWT, UserController.create);

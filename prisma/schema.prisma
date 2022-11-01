@@ -8,7 +8,7 @@ generator client {
 
 datasource db {
   provider             = "mysql"
-  url                  = env("LOCAL_URL")
+  url                  = env("URL")
   referentialIntegrity = "prisma"
 }
 
@@ -44,7 +44,7 @@ model File {
   patient_id Int
   name       String
   location   String
-  type       String
+  type       FileType
 
   Patient Patient @relation(references: [id], fields: [patient_id])
 }
@@ -53,4 +53,9 @@ enum Role {
   ADMIN
   DOCTOR
   SECRETARY
+}
+
+enum FileType {
+  PDF
+  JSON
 }

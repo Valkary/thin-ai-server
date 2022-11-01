@@ -101,7 +101,7 @@ const UserController = {
     }
 
     const { user_id, pass } = body;
-    
+
     try {
       const user: User | null = await prisma.user.findUnique({
         where: {
@@ -124,12 +124,12 @@ const UserController = {
       };
 
       if (!process.env.TOKEN_SECRET) return res.status(500).send({ success: false, message: "Server error" });
-      
+
       const token = jwt.sign(token_object, process.env.TOKEN_SECRET, { expiresIn: "700000s" });
 
       return res.status(200).send({ success: true, message: token });
     } catch (error) {
-      return res.status(200).send({ success: false, message: error });
+      return res.status(200).send({ success: false, message: 'User not found' });
     }
   }
 };
