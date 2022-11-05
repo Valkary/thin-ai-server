@@ -65,7 +65,7 @@ const FileController = {
                         patient_id,
                         name,
                         location: path,
-                        type: "dont remember what this was for" // TODO: figure what this was for
+                        type: "PDF"
                     }
                 });
             }
