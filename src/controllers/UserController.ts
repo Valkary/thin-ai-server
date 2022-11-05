@@ -114,7 +114,7 @@ const UserController = {
       const { password, username, names, last_names } = user;
       const verify_password = await bcrypt.compare(pass, password);
 
-      if (!verify_password) return res.status(200).send({ success: false, message: "Passwords didn't match!" });
+      if (!verify_password) return res.status(400).send({ success: false, message: "Passwords didn't match!" });
 
       const token_object = {
         user_id,
@@ -129,7 +129,7 @@ const UserController = {
 
       return res.status(200).send({ success: true, message: token });
     } catch (error) {
-      return res.status(200).send({ success: false, message: 'User not found' });
+      return res.status(400).send({ success: false, message: 'User not found' });
     }
   }
 };
