@@ -1,0 +1,1 @@
+{"version":3,"file":"Patient.js","sourceRoot":"","sources":["../../src/types/Patient.ts"],"names":[],"mappings":";;;AAAA,6BAAwB;AAEX,QAAA,mBAAmB,GAAG,OAAC,CAAC,MAAM,CAAC;IAC1C,WAAW,EAAE,OAAC,CAAC,MAAM,CAAC,EAAE,cAAc,EAAE,qBAAqB,EAAE,CAAC;IAChE,UAAU,EAAE,OAAC,CAAC,MAAM,CAAC,EAAE,cAAc,EAAE,oBAAoB,EAAE,CAAC;CAC/D,CAAC,CAAC"}
