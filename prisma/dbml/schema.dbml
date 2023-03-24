@@ -1,0 +1,42 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  email String [unique, not null]
+  name String [not null]
+  role Role [not null, default: 'USER']
+  medals Int [not null]
+}
+
+Table UserMedals {
+  id Int [pk, increment]
+  obtainedAt DateTime [default: `now()`, not null]
+  userId Int [not null]
+  medalId Int [not null]
+}
+
+Table Medal {
+  id Int [pk, increment]
+  title String [not null]
+  description String [not null]
+}
+
+Table Project {
+  id Int [pk, increment]
+  name String [not null]
+  description String [not null]
+  medalId Int [not null]
+}
+
+Table ProjectPost {
+  id Int [pk, increment]
+}
+
+Enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
